@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+files:
+  - source: /index.html # depoly할 소스
+    destination: /usr/share/httpd/noindex/ # deploy될 서버 경로
+    overwirte: yes
+permissions:
+  - object: /usr/share/httpd/noindex
+    pattern: "**"
+    owner: root
+    group: root
+    mode: 755
+    type:
+      - file
+hooks:
+  BeforeInstall:
+    - location: start_server
+      timeout: 100 # 제한 시간 넘어갈 시 fail
+      runas: root # 실행 할 사용자
+  ApplicationStop:
+    - location: stop_server
+      timeout: 100
+      runas: root
