@@ -1,66 +1,84 @@
 resource "aws_instance" "deployServer" {
-  ami           = "ami-0fd48c6031f8700df" # centos
-  instance_type = "t2.medium"
+  ami           = "ami-035da6a0773842f64" # amazon linux2
+  instance_type = "t3.small"
   subnet_id   =  data.terraform_remote_state.network.outputs.pri1_id
   key_name = data.terraform_remote_state.network.outputs.keypair
   vpc_security_group_ids = [aws_security_group.deployServerSG.id] # 보안그룹
+  iam_instance_profile   = aws_iam_instance_profile.instance_profile.name # IAM
   
   tags = {
-    Name = "deployServer"
+    Name = "minwook.kim-deployServer"
+    Owner = "minwook.kim"
+    Code = "Deploy"
   }
-  user_data = "${file("./cdAgent.sh")}"
+
+  user_data = "${file("./codedeployAgentInstall.sh")}"
 }
-resource "aws_eip" "deployServerIP" {
-  instance = aws_instance.deployServer.id
-  vpc      = true
-}
+
+
+
+
+
+
 
 resource "aws_security_group" "deployServerSG" {
   name        = "deployServerSG"
   description = "deployServerSG"
   vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
+  ingress {
+    description      = "bastion to deployServer"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    security_groups = [aws_security_group.bastinSG.id] #source SG
+  }
+
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
   tags = {
-    Name = "deployServerSG"
+    Name = "minwook.kim-deployServerSG"
+    Owner = "minwook.kim"
   }
 }
 
-resource "aws_security_group_rule" "deployServerSG_in" {
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "all" # all, TCP, UDP
-  cidr_blocks       = ["211.205.9.172/32"]
-  security_group_id = "${aws_security_group.web.id}"
 
-  lifecycle { 
-    create_before_destroy = true 
-    } # 생성 후 삭제
-} # all inbound
-resource "aws_security_group_rule" "deployServerSG_out" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "all"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.web.id}"
 
-  lifecycle { 
-    create_before_destroy = true 
-    } # 생성 후 삭제
-} # all outbound
-resource "aws_security_group_rule" "icmp" {
-  type              = "ingress"
-  from_port         = -1
-  to_port           = -1
-  protocol          = "icmp" # all, TCP, UDP
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.web.id}"
 
-  lifecycle { 
-    create_before_destroy = true 
-    } # 생성 후 삭제
-} # all inbound icmp
+
+
+
+
+
+
+resource "aws_iam_role" "EC2codedeployRole" {
+  name               = "HamsterEC2codedeployRole"
+  assume_role_policy = data.aws_iam_policy_document.deployRoleAssume.json
+}
+resource "aws_iam_role_policy_attachment" "EC2CodeDeployRoleAttach" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy"
+  role       = aws_iam_role.EC2codedeployRole.name
+}
+resource "aws_iam_instance_profile" "instance_profile" {
+  name = "HamsterEC2codedeployRole"
+  role = aws_iam_role.EC2codedeployRole.name
+}
+
+
+
+
+
+
+
+
+
+
 
 output "deployServerSG_id" {
     value = "${aws_security_group.deployServerSG.id}"
