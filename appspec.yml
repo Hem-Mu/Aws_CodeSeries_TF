@@ -1,9 +1,9 @@
 version: 0.0
 os: linux
 files:
-  - source: /index.html # depoly할 소스
-    destination: /usr/share/httpd/noindex/ # deploy될 서버 경로
-    overwirte: yes
+  - source: /index.html # depoly source path
+    destination: /usr/share/httpd/noindex/ # deploy server path
+file_exists_behavior: RETATE
 permissions:
   - object: /usr/share/httpd/noindex
     pattern: "**"
