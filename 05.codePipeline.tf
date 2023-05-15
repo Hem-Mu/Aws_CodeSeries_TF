@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "artifactBucket" {
   bucket = "minwook.kim-codepipeline-s3" # only lowercase
+  force_destroy = true
 
   tags = {
     Name = "minwook.kim-codePipeline-S3"
