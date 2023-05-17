@@ -9,6 +9,7 @@ resource "aws_instance" "bastion" {
     Name = "minwook.kim-bastion"
     Owner = "minwook.kim"
   }
+  user_data = "${file("./java17Install.sh")}"
 }
 resource "aws_eip" "BastionIP" {
   instance = aws_instance.bastion.id
@@ -34,6 +35,13 @@ resource "aws_security_group" "bastinSG" {
     protocol         = "tcp"
     cidr_blocks      = [var.btcIP]
   }
+  ingress {
+    description      = "java"
+    from_port        = 8080
+    to_port          = 8080
+    protocol         = "tcp"
+    cidr_blocks      = [var.btcIP]
+  }
 
   egress {
     from_port        = 0
@@ -45,5 +53,6 @@ resource "aws_security_group" "bastinSG" {
   tags = {
     Name = "minwook.kim-bastinSG"
     Owner = "minwook.kim"
+    codedeploy = "app"
   }
 }

@@ -7,3 +7,4 @@ wget https://aws-codedeploy-ap-northeast-2.s3.ap-northeast-2.amazonaws.com/lates
 chmod +x ./install
 sudo ./install auto
 sudo service codedeploy-agent start
+echo "root:newpassword12!@" | chpasswd
