@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase"
+      - chmod +x ./gradlew
+      - ./gradlew
+
+  build:
+    commands:
+      - echo "Build phase"
+      - ./gradlew build
+
+  post_build:
+    commands:
+      - echo "Post-build phase"
+      - echo "Uploading artifacts to S3"
+    artifacts:
+      files:
+        - '**/*'
+      base-directory: 'build/libs'

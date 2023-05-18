@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "appartifactBucket" {
 
 resource "aws_codepipeline" "appcodepipeline" {
   name     = "minwook-appCodepipeline-tf"
-  role_arn = aws_iam_role.codePipelinRole.arn # codePipeline Role
+  role_arn = aws_iam_role.codepipelinrole.arn # codePipeline Role
 
   artifact_store {
     location = aws_s3_bucket.appartifactBucket.bucket
@@ -44,6 +44,32 @@ resource "aws_codepipeline" "appcodepipeline" {
     }
   }
 
+    stage {
+    name = "Plan"
+
+    action {
+      run_order        = 1
+      name             = "Codebuild"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["SourceOutput"]
+      output_artifacts = ["BuildOutput"]
+      version          = "1"
+
+      configuration = {
+        ProjectName          = aws_codebuild_project.codebuild.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "PIPELINE_EXECUTION_ID"
+            value = "#{codepipeline.PipelineExecutionId}"
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+  }
+
   stage {
     name = "Deploy"
 
@@ -52,7 +78,7 @@ resource "aws_codepipeline" "appcodepipeline" {
       category        = "Deploy"
       owner           = "AWS"
       provider        = "CodeDeploy"
-      input_artifacts = ["SourceOutput"]
+      input_artifacts = ["BuildOutput"]
       version         = "1"
 
       configuration = {

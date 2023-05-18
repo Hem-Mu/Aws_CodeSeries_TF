@@ -1,15 +1,15 @@
-resource "aws_instance" "deployServer" {
+resource "aws_instance" "webServer" {
   ami           = "ami-035da6a0773842f64" # amazon linux2
   instance_type = "t3.small"
   subnet_id   =  data.terraform_remote_state.network.outputs.pri1_id
   key_name = data.terraform_remote_state.network.outputs.keypair
-  vpc_security_group_ids = [aws_security_group.deployServerSG.id] # 보안그룹
+  vpc_security_group_ids = [aws_security_group.webServerSG.id] # 보안그룹
   iam_instance_profile   = aws_iam_instance_profile.instance_profile.name # IAM
   
   tags = {
-    Name = "minwook.kim-deployServer"
+    Name = "minwook.kim-webServer"
     Owner = "minwook.kim"
-    Code = "Deploy"
+    codedeploy = "web"
   }
 
   user_data = "${file("./codedeployAgentInstall.sh")}"
@@ -21,13 +21,13 @@ resource "aws_instance" "deployServer" {
 
 
 
-resource "aws_security_group" "deployServerSG" {
+resource "aws_security_group" "webServerSG" {
   name        = "deployServerSG"
   description = "deployServerSG"
   vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
   ingress {
-    description      = "bastion to deployServer"
+    description      = "bastion to webServer"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"

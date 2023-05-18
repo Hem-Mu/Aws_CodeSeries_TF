@@ -9,7 +9,7 @@ resource "aws_codedeploy_app" "webdeploy" {
 resource "aws_codedeploy_deployment_group" "webcodedeployDeployGroup" {
   app_name              = aws_codedeploy_app.webdeploy.name
   deployment_group_name = "HamstercodedeployDeployGroup"
-  service_role_arn      = aws_iam_role.codedeployRole.arn
+  service_role_arn      = aws_iam_role.codedeployrole.arn
 
   ec2_tag_set {
     ec2_tag_filter {

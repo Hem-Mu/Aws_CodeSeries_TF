@@ -1,11 +1,11 @@
 version: 0.0
 os: linux
 files:
-  - source: /index.html # depoly source path
-    destination: /usr/share/httpd/noindex/ # deploy server path
-file_exists_behavior: RETATE
+  - source: / # depoly source path
+    destination: /var/www/html # deploy server path
+file_exists_behavior: OVERWRITE
 permissions:
-  - object: /usr/share/httpd/noindex
+  - object: /var/www/html
     pattern: "**"
     owner: root
     group: root
@@ -14,10 +14,13 @@ permissions:
       - file
 hooks:
   BeforeInstall:
-    - location: start_server
-      timeout: 100 # 제한 시간 넘어갈 시 fail
-      runas: root # 실행 할 사용자
+    - location: cd_install_dependencies
+      timeout: 300
+      runas: root
+    - location: cd_start_server
+      timeout: 300
+      runas: root
   ApplicationStop:
-    - location: stop_server
-      timeout: 100
+    - location: cd_stop_server
+      timeout: 300
       runas: root

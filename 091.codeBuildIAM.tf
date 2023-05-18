@@ -1,9 +1,17 @@
-
-resource "aws_iam_role_policy" "example" {
-  role   = aws_iam_role.example.name
-  policy = data.aws_iam_policy_document.example.json
+resource "aws_iam_role" "codebuildrole" {
+  name               = "HamsterCodeBuildRole"
+  assume_role_policy = data.aws_iam_policy_document.buildroleassume.json
 }
-data "aws_iam_policy_document" "assume_role" {
+resource "aws_iam_policy" "codebuild_policy" {
+  name   = "HamsterCodeBuildPolicy"
+  policy = data.aws_iam_policy_document.codebuildpolicydoc.json
+}
+resource "aws_iam_role_policy_attachment" "codebuildroleattach" {
+  policy_arn = aws_iam_policy.codebuild_policy.arn
+  role       = aws_iam_role.codebuildrole.name
+}
+
+data "aws_iam_policy_document" "buildroleassume" {
   statement {
     effect = "Allow"
 
@@ -14,14 +22,8 @@ data "aws_iam_policy_document" "assume_role" {
 
     actions = ["sts:AssumeRole"]
   }
-}
-
-resource "aws_iam_role" "example" {
-  name               = "example"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
-}
-
-data "aws_iam_policy_document" "example" {
+}# trust 
+data "aws_iam_policy_document" "codebuildpolicydoc" {
   statement {
     effect = "Allow"
 
@@ -33,7 +35,6 @@ data "aws_iam_policy_document" "example" {
 
     resources = ["*"]
   }
-
   statement {
     effect = "Allow"
 
@@ -49,7 +50,40 @@ data "aws_iam_policy_document" "example" {
 
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
 
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:GetBucketVersioning",
+      "s3:PutObjectAcl",
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      "arn:aws:s3:::*",
+      "arn:aws:s3:::*/*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "codecommit:GitPull"
+    ]
+
+    resources = ["*"]
+  }
+  statement {
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      aws_s3_bucket.buildbucket.arn,
+      "${aws_s3_bucket.buildbucket.arn}/*",
+    ]
+  }
 #   statement {
 #     effect    = "Allow"
 #     actions   = ["ec2:CreateNetworkInterfacePermission"]
@@ -70,13 +104,4 @@ data "aws_iam_policy_document" "example" {
 #       values   = ["codebuild.amazonaws.com"]
 #     }
 #   } # require docker using
-
-  statement {
-    effect  = "Allow"
-    actions = ["s3:*"]
-    resources = [
-      aws_s3_bucket.example.arn,
-      "${aws_s3_bucket.example.arn}/*",
-    ]
-  }
 }

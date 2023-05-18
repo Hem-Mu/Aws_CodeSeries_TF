@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "webartifactBucket" {
 
 resource "aws_codepipeline" "webcodepipeline" {
   name     = "minwook-webCodepipeline-tf"
-  role_arn = aws_iam_role.codePipelinRole.arn # codePipeline Role
+  role_arn = aws_iam_role.codepipelinrole.arn # codePipeline Role
 
   artifact_store {
     location = aws_s3_bucket.webartifactBucket.bucket
