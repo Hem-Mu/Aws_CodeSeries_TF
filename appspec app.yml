@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files:
   - source: / # depoly source path
-    destination: /var/www/html # deploy server path
+    destination: /build/ilbs # deploy server path
 file_exists_behavior: OVERWRITE
 permissions:
-  - object: /var/www/html
+  - object: /build/ilbs
     pattern: "**"
     owner: root
     group: root
@@ -14,13 +14,13 @@ permissions:
       - file
 hooks:
   BeforeInstall:
-    - location: web_install_dependencies
+    - location: app_install_dependencies
       timeout: 300
       runas: root
-    - location: web_start_server
+    - location: app_start_server
       timeout: 300
       runas: root
   ApplicationStop:
-    - location: web_stop_server
+    - location: app_stop_server
       timeout: 300
       runas: root

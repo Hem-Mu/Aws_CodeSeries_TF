@@ -13,9 +13,9 @@ resource "aws_codedeploy_deployment_group" "webcodedeployDeployGroup" {
 
   ec2_tag_set {
     ec2_tag_filter {
-      key   = "Code"
+      key   = "codedeploy"
       type  = "KEY_AND_VALUE"
-      value = "Deploy"
+      value = "web"
     }
   }
 

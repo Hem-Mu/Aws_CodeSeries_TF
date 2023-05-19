@@ -80,8 +80,8 @@ data "aws_iam_policy_document" "codebuildpolicydoc" {
     effect  = "Allow"
     actions = ["s3:*"]
     resources = [
-      aws_s3_bucket.buildbucket.arn,
-      "${aws_s3_bucket.buildbucket.arn}/*",
+      aws_s3_bucket.appartifactBucket.arn,
+      "${aws_s3_bucket.appartifactBucket.arn}/*",
     ]
   }
 #   statement {

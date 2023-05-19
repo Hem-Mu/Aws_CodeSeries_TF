@@ -58,6 +58,19 @@ data "aws_iam_policy_document" "codepipelinepolicydoc" {
     effect = "Allow"
 
     actions = [
+      "codedeploy:CreateDeployment",
+      "codedeploy:GetDeploymentConfig",
+      "codedeploy:RegisterApplicationRevision",
+      "codedeploy:GetDeployment",
+      "codedeploy:GetApplicationRevision",
+    ]
+
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+
+    actions = [
       "s3:GetObject",
       "s3:GetObjectVersion",
       "s3:GetBucketVersioning",

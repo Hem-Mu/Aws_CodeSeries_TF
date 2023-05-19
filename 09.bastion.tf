@@ -35,13 +35,6 @@ resource "aws_security_group" "bastinSG" {
     protocol         = "tcp"
     cidr_blocks      = [var.btcIP]
   }
-  ingress {
-    description      = "java"
-    from_port        = 8080
-    to_port          = 8080
-    protocol         = "tcp"
-    cidr_blocks      = [var.btcIP]
-  }
 
   egress {
     from_port        = 0

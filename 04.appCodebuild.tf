@@ -1,13 +1,3 @@
-resource "aws_s3_bucket" "buildbucket" {
-  bucket = "minwook.kim-codebuild-s3" # only lowercase
-  force_destroy = true
-
-  tags = {
-    Name = "minwook.kim-codebuild-s3"
-    Owner = "minwook.kim"
-  }
-}
-
 resource "aws_codebuild_project" "codebuild" {
   name          = "minwook-appCodebuild"
   description   = "test_codebuild_project"
@@ -15,12 +5,13 @@ resource "aws_codebuild_project" "codebuild" {
   service_role  = aws_iam_role.codebuildrole.arn
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "S3"
+    location = aws_s3_bucket.appartifactBucket.bucket
   }
 
   cache {
     type     = "S3"
-    location = aws_s3_bucket.buildbucket.bucket
+    location = aws_s3_bucket.appartifactBucket.bucket
   }
 
   environment {

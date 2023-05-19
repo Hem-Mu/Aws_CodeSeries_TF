@@ -22,8 +22,8 @@ resource "aws_instance" "webServer" {
 
 
 resource "aws_security_group" "webServerSG" {
-  name        = "deployServerSG"
-  description = "deployServerSG"
+  name        = "webServerSG"
+  description = "webServerSG"
   vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
   ingress {
@@ -46,51 +46,10 @@ resource "aws_security_group" "webServerSG" {
     Name = "minwook.kim-deployServerSG"
     Owner = "minwook.kim"
   }
-}
-
-
-
-
-
-
-
-
-
-data "aws_iam_policy_document" "EC2RoleAssume" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }# establish trust with codedeploy
-
-    actions = ["sts:AssumeRole"]
+  lifecycle {
+    create_before_destroy = true
   }
 }
-resource "aws_iam_role" "EC2codedeployRole" {
-  name               = "HamsterEC2codedeployRole"
-  assume_role_policy = data.aws_iam_policy_document.EC2RoleAssume.json
-}
-resource "aws_iam_role_policy_attachment" "EC2CodeDeployRoleAttach" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy"
-  role       = aws_iam_role.EC2codedeployRole.name
-}
-resource "aws_iam_instance_profile" "instance_profile" {
-  name = "HamsterEC2codedeployRole"
-  role = aws_iam_role.EC2codedeployRole.name
-}
-
-
-
-
-
-
-
-
-
-
-
-output "deployServerSG_id" {
-    value = "${aws_security_group.deployServerSG.id}"
+output "webServerSG_id" {
+    value = "${aws_security_group.webServerSG.id}"
   }

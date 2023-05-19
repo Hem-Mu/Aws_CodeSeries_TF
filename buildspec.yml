@@ -20,7 +20,7 @@ phases:
     commands:
       - echo "Post-build phase"
       - echo "Uploading artifacts to S3"
-    artifacts:
-      files:
-        - '**/*'
-      base-directory: 'build/libs'
+artifacts:
+  files:
+    - '**/*'
+  name: "BuildOutput"

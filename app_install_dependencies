@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Before Install"
+yum install -y git
+yum install java-17-amazon-corretto-devel -y
