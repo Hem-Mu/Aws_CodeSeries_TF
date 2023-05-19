@@ -7,6 +7,8 @@ resource "aws_codebuild_project" "codebuild" {
   artifacts {
     type = "S3"
     location = aws_s3_bucket.appartifactBucket.bucket
+    name = "hasmterbuildOutput" # Not applicable when running with pipeline
+    path = "/hamster/buildster" # Not applicable when running with pipeline
   }
 
   cache {
