@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files:
   - source: / # depoly source path
-    destination: /build/ilbs # deploy server path
+    destination: /java # deploy server path
 file_exists_behavior: OVERWRITE
 permissions:
-  - object: /build/ilbs
+  - object: /java
     pattern: "**"
     owner: root
     group: root
@@ -17,6 +17,7 @@ hooks:
     - location: app_install_dependencies
       timeout: 300
       runas: root
+  AfterInstall:
     - location: app_start_server
       timeout: 300
       runas: root

@@ -1,9 +1,11 @@
 #!/bin/bash
-pid=$(pgrep java)
+pids=$(pgrep java)
 # PID가 존재하면 작업 종료
-if [ -n "$pid" ]; then
-  kill "$pid"
-  echo "Stopped job with PID: $pid"
+if [ -n "$pids" ]; then
+  for pid in $pids; do
+    kill "$pid"
+    echo "Stopped job with PID: $pid"
+  done
 else
   echo "No running jobs found"
 fi
