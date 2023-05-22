@@ -28,8 +28,8 @@ resource "aws_security_group" "appServerSG" {
 
   ingress {
     description      = "bastion to appServer"
-    from_port        = 22
-    to_port          = 22
+    from_port        = var.sshport
+    to_port          = var.sshport
     protocol         = "tcp"
     security_groups = [aws_security_group.bastinSG.id] #source SG
   }

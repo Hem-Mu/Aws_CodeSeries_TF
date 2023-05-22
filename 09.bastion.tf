@@ -30,8 +30,8 @@ resource "aws_security_group" "bastinSG" {
 
   ingress {
     description      = "SSH from VPC"
-    from_port        = 22
-    to_port          = 22
+    from_port        = var.sshport
+    to_port          = var.sshport
     protocol         = "tcp"
     cidr_blocks      = [var.btcIP]
   }
