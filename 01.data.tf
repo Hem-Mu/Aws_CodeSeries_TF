@@ -12,3 +12,11 @@ data "terraform_remote_state" "network" {
     region = "ap-northeast-2"
   }
 }
+data "terraform_remote_state" "threetier" {
+  backend = "s3"
+  config = {
+    bucket = "minwook-terraform-state-bucket"
+    key    = "3tier/terraform.tfstate"
+    region = "ap-northeast-2"
+  }
+}
