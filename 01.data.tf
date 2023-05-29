@@ -4,19 +4,11 @@
 #         path = ".././terraform.tfstate"
 #     }   
 # }
-data "terraform_remote_state" "network" {
+data "terraform_remote_state" "infra" {
   backend = "s3"
   config = {
     bucket = "minwook-terraform-state-bucket"
     key    = "terraform.tfstate"
-    region = "ap-northeast-2"
-  }
-}
-data "terraform_remote_state" "threetier" {
-  backend = "s3"
-  config = {
-    bucket = "minwook-terraform-state-bucket"
-    key    = "3tier/terraform.tfstate"
     region = "ap-northeast-2"
   }
 }

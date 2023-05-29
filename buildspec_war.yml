@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase"
+      - yum install -y maven
+
+  build:
+    commands:
+      - echo "Build phase"
+      - mvn clean install
+
+  post_build:
+    commands:
+      - echo "Post-build phase"
+      - echo "Uploading artifacts to S3"
+artifacts:
+  files:
+    - '**/*'
+  name: "BuildOutput"
